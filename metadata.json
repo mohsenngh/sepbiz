@@ -1,0 +1,7 @@
+{
+  "name": "Sep-Business Registration",
+  "description": "A multi-step registration flow for a professional business management service, designed with a clean, mobile-first, and RTL interface for Persian-speaking users.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
