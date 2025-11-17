@@ -32,7 +32,7 @@ const DateFilter = ({ onCreateReport }) => {
     };
 
     return (
-        <div className="space-y-4">
+        <div className="space-y-3">
             <SubHeaderTabs 
                 tabs={[{id: 'daily', label: 'روزانه'}, {id: 'weekly', label: 'هفتگی'}, {id: 'monthly', label: 'ماهانه'}, {id: 'custom', label: 'دلخواه'}]}
                 activeTab={filterType}
@@ -40,12 +40,12 @@ const DateFilter = ({ onCreateReport }) => {
             />
             {filterType !== 'custom' && (
                 <div className="relative">
-                    <div className="flex space-x-3 space-x-reverse overflow-x-auto p-2 no-scrollbar">
+                    <div className="flex space-x-2 space-x-reverse overflow-x-auto p-1 no-scrollbar">
                         {dateOptions[filterType].map(date => (
                              <button 
                                 key={date} 
                                 onClick={() => setSelectedDate(date)}
-                                className={`px-4 py-2 text-sm font-semibold rounded-full whitespace-nowrap transition-colors ${selectedDate === date ? 'bg-blue-500 text-white' : 'bg-slate-700 text-gray-300'}`}
+                                className={`px-3 py-1.5 text-xs font-semibold rounded-full whitespace-nowrap transition-colors ${selectedDate === date ? 'bg-blue-500 text-white' : 'bg-slate-700 text-gray-300'}`}
                             >
                                 {date}
                             </button>
@@ -53,7 +53,7 @@ const DateFilter = ({ onCreateReport }) => {
                     </div>
                 </div>
             )}
-             <button onClick={onCreateReport} className="w-full py-3 text-white bg-primary rounded-lg font-semibold hover:bg-primary-hover">ایجاد گزارش</button>
+             <button onClick={onCreateReport} className="w-full py-2.5 text-sm text-white bg-primary rounded-lg font-semibold hover:bg-primary-hover">ایجاد گزارش</button>
         </div>
     )
 }
@@ -148,14 +148,75 @@ const SalesReportView = () => {
     )
 }
 
+const DownloadIcon = ({ className = 'w-5 h-5' }: { className?: string }) => (
+    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+    </svg>
+);
+
+const mockCustomersReport = [
+    { id: 1, name: 'علی محمدی', phone: '09123456789', province: 'تهران', periodPurchases: 12, totalPurchases: 50 },
+    { id: 2, name: 'سارا رضایی', phone: '09351112233', province: 'اصفهان', periodPurchases: 8, totalPurchases: 25 },
+    { id: 3, name: 'رضا حسینی', phone: '09159876543', province: 'خراسان رضوی', periodPurchases: 5, totalPurchases: 10 },
+    { id: 4, name: 'مریم احمدی', phone: '09174561234', province: 'فارس', periodPurchases: 2, totalPurchases: 2 },
+].sort((a, b) => b.periodPurchases - a.periodPurchases);
+
+
+const CustomerReportView = () => {
+    const handleDownload = () => {
+        alert('در حال آماده‌سازی فایل اکسل...');
+        // In a real app, this would trigger a file download with customer data.
+    };
+
+    return (
+        <div className="space-y-4 mt-6 animate-fade-in">
+            <div className="flex justify-between items-center">
+                <h3 className="font-bold text-white text-lg">گزارش مشتریان</h3>
+                <button onClick={handleDownload} className="flex items-center space-x-2 space-x-reverse bg-green-600 text-white px-3 py-1.5 rounded-lg text-sm font-semibold hover:bg-green-700">
+                    <DownloadIcon className="w-4 h-4" />
+                    <span>دانلود اکسل</span>
+                </button>
+            </div>
+            
+            <div className="space-y-3">
+                {mockCustomersReport.map(customer => (
+                    <div key={customer.id} className="bg-slate-800 p-4 rounded-lg">
+                        <div className="flex justify-between items-start">
+                             <div>
+                                <p className="font-bold text-base text-white">{customer.name}</p>
+                                <p className="text-sm text-gray-400 mt-1">{customer.province}</p>
+                            </div>
+                            <p className="text-sm text-gray-300 ltr">{customer.phone}</p>
+                        </div>
+                        <div className="flex justify-around items-center mt-3 pt-3 border-t border-slate-700/50">
+                             <div className="text-center">
+                                <p className="text-xs text-gray-500">خرید در بازه</p>
+                                <p className="font-bold text-lg text-blue-400">{customer.periodPurchases}</p>
+                            </div>
+                            <div className="text-center">
+                                <p className="text-xs text-gray-500">کل خریدها</p>
+                                <p className="font-bold text-lg text-white">{customer.totalPurchases}</p>
+                            </div>
+                        </div>
+                    </div>
+                ))}
+            </div>
+        </div>
+    );
+};
+
 
 const ReportsScreen = () => {
-    const TABS = [{ id: 'sales', label: 'گزارش فروش' }, { id: 'products', label: 'گزارش محصولات' }];
+    const TABS = [
+        { id: 'sales', label: 'گزارش فروش' }, 
+        { id: 'products', label: 'گزارش محصولات' },
+        { id: 'customers', label: 'گزارش مشتریان' },
+    ];
     const [activeTab, setActiveTab] = useState('sales');
     const [showReport, setShowReport] = useState(false);
 
     return (
-        <div className="p-4 space-y-6">
+        <div className="p-4 space-y-4">
             <SubHeaderTabs tabs={TABS} activeTab={activeTab} onTabChange={setActiveTab} />
             <DateFilter onCreateReport={() => setShowReport(true)} />
             
@@ -163,6 +224,7 @@ const ReportsScreen = () => {
                 <>
                     {activeTab === 'sales' && <SalesReportView />}
                     {activeTab === 'products' && <ProductReportView />}
+                    {activeTab === 'customers' && <CustomerReportView />}
                 </>
             )}
         </div>
